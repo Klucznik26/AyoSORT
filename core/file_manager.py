@@ -1,13 +1,17 @@
 import os
 import shutil
 
-def scan_images(folder, extensions):
-    return [f for f in os.listdir(folder) if os.path.splitext(f)[1].lower() in extensions]
-
 def create_directories(base_path, subdirs):
+    if not os.path.exists(base_path):
+        os.makedirs(base_path)
     for subdir in subdirs:
-        os.makedirs(os.path.join(base_path, subdir), exist_ok=True)
+        path = os.path.join(base_path, subdir)
+        if not os.path.exists(path):
+            os.makedirs(path)
 
 def copy_image(src_path, dest_path):
-    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
-    shutil.copy2(src_path, dest_path)
+    try:
+        shutil.copy2(src_path, dest_path)
+        return True
+    except Exception as e:
+        raise e

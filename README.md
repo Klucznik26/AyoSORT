@@ -1,4 +1,4 @@
-# AyoSORT 1.0.0 - Intelligent Image Sorting
+# AyoSORT 1.3.0 - Intelligent Image Sorting
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)
@@ -7,25 +7,37 @@
 **AyoSORT** is a tool created out of a passion for order and technology. The application allows for fast and intuitive categorization of image files, offering a modern graphical interface built using Python and Qt.
 
 ## 📸 Program Preview
-| [Creative Theme](screenshots/main_window_creative.png) | [Light Theme](screenshots/main_window_light.png) | [Relax Theme](screenshots/main_window_relax.png) |
+| [Dark Theme](screenshots/main_view_dark.png) | [Light Theme](screenshots/main_view_light.png) | [Creative Theme](screenshots/main_view_creative.png) |
 |:---:|:---:|:---:|
-| [![Creative](screenshots/main_window_creative.png)](screenshots/main_window_creative.png) | [![Light](screenshots/main_window_light.png)](screenshots/main_window_light.png) | [![Relax](screenshots/main_window_relax.png)](screenshots/main_window_relax.png) |
+| [![Dark](screenshots/main_view_dark.png)](screenshots/main_view_dark.png) | [![Light](screenshots/main_view_light.png)](screenshots/main_view_light.png) | [![Creative](screenshots/main_view_creative.png)](screenshots/main_view_creative.png) |
 
-### 🌐 Wide Language Selection
-Manage your photos in one of the many available languages:
-[![Language Selection](screenshots/language_selection.png)](screenshots/language_selection.png)
+| [Relax Theme](screenshots/main_view_relax.png) | [System Theme](screenshots/main_view_system.png) | |
+|:---:|:---:|:---:|
+| [![Relax](screenshots/main_view_relax.png)](screenshots/main_view_relax.png) | [![System](screenshots/main_view_system.png)](screenshots/main_view_system.png) | |
+
+### 🌐 Personalization & Localization
+Manage your photos in your preferred style and language:
+| Theme Selection | Language Selection |
+|:---:|:---:|
+| [![Theme Selection](screenshots/theme_selection_menu.png)](screenshots/theme_selection_menu.png) | [![Language Selection](screenshots/language_selection_menu.png)](screenshots/language_selection_menu.png) |
 
 ## 🚀 Features
 * **Intuitive Management**: Quickly create sorting directories directly from the application.
 * **Multi-language Support**: Full support for various alphabets and regions.
-* **Personalization**: Support for advanced QSS themes (Light, Creative, Relax).
+* **Personalization**: Support for advanced QSS themes (Dark, Light, System, Creative, Relax).
 * **User-Friendly Interface**: Minimalist design optimized for user experience (UX).
+* **Visual Identity**: Dedicated application icon included in the `assets` directory.
 
 ## 🌐 Supported Languages
 AyoSORT displays language names in their native alphabets for easier navigation:
 
 * 🇵🇱 **Polski** (Polish)
 * 🇬🇧 **English**
+* 🇫🇷 **Français** (French)
+* 🇮🇹 **Italiano** (Italian)
+* 🇬🇷 **Ελληνικά** (Greek)
+* 🇳🇱 **Nederlands** (Dutch)
+* 🇮🇸 **Íslenska** (Icelandic)
 * 🇺🇦 **Українська** (Ukrainian)
 * 🇱🇻 **Latviešu** (Latvian)
 * 🇱🇹 **Lietuvių** (Lithuanian)

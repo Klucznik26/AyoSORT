@@ -6,12 +6,12 @@
     "tooltip_mid": "Vidutinis vaizdas",
     "tooltip_bad": "Blogas vaizdas",
     "label_info_create": "Sukurti rūšiavimo\nkatalogą",
-    "label_info_select": "Pasirinkti aplanką\nrūšiavimui",
+    "label_info_select": "Pasirinkite aplanką\nrūšiavimui",
     "btn_settings": "Nustatymai",
     "btn_close": "Uždaryti",
-    "drop_label_text": "Vilkite aplanką arba failą čia\n(arba spustelėkite Nustatymai, kad pasirinktumėte)",
+    "drop_label_text": "Nuvilkite aplanką ar failą čia\n(arba spustelėkite Nustatymai)",
     "msg_no_images": "Nėra palaikomų vaizdo failų.",
-    "msg_success_create": "Sukurtas SORT katalogas ir pakatalogiai.",
+    "msg_success_create": "Sukurtas SORT katalogas ir pakatalogiai."
     "msg_info_exists": "Pasirinktas esamas SORT katalogas.",
     "msg_error_create": "Nepavyko sukurti/pasirinkti katalogų: {e}",
     "dialog_create_title": "Pasirinkite rūšiavimo katalogo vietą",
@@ -35,9 +35,10 @@
     "theme_dark": "Tamsi",
     "theme_light": "Šviesi",
     "theme_system": "Sisteminė",
-    "theme_relax": "Atpalaiduojanti",
+    "theme_relax": "Relaksacinė",
+    "theme_creative": "Kūrybinė",
     "dialog_look_in": "Ieškoti:",
     "dialog_file_name": "Aplanko pavadinimas:",
     "dialog_file_type": "Failų tipas:",
-    "label_file_count": "{count} failai"
+    "label_file_count": "{count} failų"
 }

@@ -1,6 +1,4 @@
 import os
-import json
-import random
 from PySide6.QtWidgets import (QMainWindow, QLabel, QPushButton, QVBoxLayout, 
                                QHBoxLayout, QWidget, QFileDialog, QMessageBox)
 from PySide6.QtGui import QPixmap, QKeyEvent
@@ -9,13 +7,16 @@ from PySide6.QtCore import Qt, QRect, QPoint
 from .settings_dialog import SettingsDialog
 from .widgets import ImageDropLabel, ThumbnailFanWidget, AnimatedOverlay
 from themes import dark, light, relax, system, creative
-from .gui_utils import create_emoji_icon
-from core import file_manager
+from .gui_utils import create_emoji_icon, apply_dialog_theme
 from core.translator import translator
+from core.engine import AyoSortEngine
 
 class AyoSortApp(QMainWindow):
+    VERSION = "1.3.0"
+
     def __init__(self):
         super().__init__()
+        self.engine = AyoSortEngine()
         self.setFixedSize(795, 480)
 
         # Definicje motywów
@@ -27,32 +28,15 @@ class AyoSortApp(QMainWindow):
             "creative": creative.theme
         }
 
-        # Konfiguracja kategorii i folderów
-        self.categories = {
-            "Dobre": os.path.join("SORT", "Dobre"),
-            "Może być": os.path.join("SORT", "Średnie"),
-            "Kiepskie": os.path.join("SORT", "Słabe")
-        }
-        
-        # Obsługiwane rozszerzenia
-        self.image_extensions = {".jpg", ".jpeg", ".png", ".bmp", ".gif", ".webp", ".wep", ".tif", ".tiff", ".ico"}
-        
-        self.images = []
-        self.current_index = 0
-        self.source_folder = ""
-        self.destination_folder = None
         self.current_pixmap = None
-        self.current_language = "pl"
         
-        # Ścieżka do pliku konfiguracyjnego
-        self.config_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config.json")
-        self._load_config()
-        translator.load_language(self.current_language)
+        # Ładowanie języka z silnika
+        translator.load_language(self.engine.current_language)
         translator.language_changed.connect(self._update_ui_texts)
 
         self._setup_ui()
-        self.setWindowTitle(translator.get("window_title"))
-        self.apply_theme("dark")
+        self.setWindowTitle(f"{translator.get('window_title')} v{self.VERSION}")
+        self.apply_theme(self.engine.current_theme)
         self._check_initial_state()
 
     def _setup_ui(self):
@@ -141,6 +125,7 @@ class AyoSortApp(QMainWindow):
 
         # --- ŚRODKOWY PANEL (Obraz) ---
         self.image_label = ImageDropLabel(on_drop_callback=self.handle_drop)
+        self.image_label.setObjectName("dropArea")
         self.layout.addWidget(self.image_label, stretch=1, alignment=Qt.AlignmentFlag.AlignBottom)
 
         # --- PRAWY PANEL (Logo) ---
@@ -163,7 +148,8 @@ class AyoSortApp(QMainWindow):
         self.logo_label = QLabel()
         self.logo_label.setFixedSize(122, 115)
         self.logo_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
-        logo_path = os.path.join("assets", "AyoSORT.png")
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        logo_path = os.path.join(base_dir, "assets", "AyoSORT.png")
         if os.path.exists(logo_path):
             pixmap = QPixmap(logo_path)
             # Skalowanie logo jeśli jest za duże
@@ -171,7 +157,7 @@ class AyoSortApp(QMainWindow):
                 pixmap = pixmap.scaledToHeight(115, Qt.TransformationMode.SmoothTransformation)
             self.logo_label.setPixmap(pixmap)
         else:
-            self.logo_label.setText("AyoSORT")
+            self.logo_label.setText(f"AyoSORT v{self.VERSION}")
             self.logo_label.setStyleSheet("color: #666; font-weight: bold;")
         
         right_layout.addWidget(self.logo_label)
@@ -180,7 +166,7 @@ class AyoSortApp(QMainWindow):
         # Mapowanie klawiszy (zachowujemy logikę sortowania 1, 2, 3)
         self.key_map = {}
         hotkeys = [Qt.Key.Key_1, Qt.Key.Key_2, Qt.Key.Key_3]
-        for i, (cat_name, folder_name) in enumerate(self.categories.items()):
+        for i, cat_name in enumerate(self.engine.categories.keys()):
             if i < len(hotkeys):
                 self.key_map[hotkeys[i]] = cat_name
 
@@ -191,7 +177,7 @@ class AyoSortApp(QMainWindow):
 
         # Jeśli upuszczono jeden element i jest to folder
         if len(paths) == 1 and os.path.isdir(paths[0]):
-            self.source_folder = paths[0]
+            self.engine.source_folder = paths[0]
             self._load_images()
             self._prepare_folders()
             self._show_current_image()
@@ -202,13 +188,14 @@ class AyoSortApp(QMainWindow):
         first_path = paths[0]
         if os.path.isfile(first_path):
             folder = os.path.dirname(first_path)
-            self.source_folder = folder
+            self.engine.source_folder = folder
             
             # Wybieramy tylko te pliki, które są obrazami i są w tym samym folderze
             selected_images = []
             for p in paths:
                 if os.path.isfile(p) and os.path.dirname(p) == folder:
-                    if os.path.splitext(p)[1].lower() in self.image_extensions:
+                    ext = os.path.splitext(p)[1].lower()
+                    if ext in self.engine.image_extensions:
                         selected_images.append(os.path.basename(p))
             
             if selected_images:
@@ -232,57 +219,16 @@ class AyoSortApp(QMainWindow):
         
         if hasattr(self, 'current_theme_name') and self.current_theme_name in self.themes:
             t = self.themes[self.current_theme_name]
-            if isinstance(t, str):
-                dialog.setStyleSheet(t)
-            else:
-                dialog.setStyleSheet(f"""
-                    QFileDialog {{ background-color: {t['bg']}; color: {t['text']}; }}
-                    QWidget {{ color: {t['text']}; }}
-                    QTreeView, QListView {{ 
-                        background-color: {t['widget']}; 
-                        color: {t['text']}; 
-                        border: 1px solid {t['border']};
-                    }}
-                    QPushButton {{
-                        background-color: {t['widget']};
-                        color: {t['text']};
-                        border: 1px solid {t['border']};
-                        border-radius: 4px;
-                        padding: 5px;
-                    }}
-                    QPushButton:hover {{
-                        background-color: {t['border']}; 
-                    }}
-                    QComboBox {{
-                        background-color: {t['widget']};
-                        color: {t['text']};
-                        border: 1px solid {t['border']};
-                    }}
-                    QLineEdit {{
-                        background-color: {t['widget']};
-                        color: {t['text']};
-                        border: 1px solid {t['border']};
-                    }}
-                """)
+            apply_dialog_theme(dialog, t)
         
         if dialog.exec():
             selected_files = dialog.selectedFiles()
             if selected_files:
                 folder = selected_files[0]
-                self.destination_folder = folder
-                self._save_config()
-                
-                # Tworzenie struktury katalogów
-                sort_path = os.path.join(folder, "SORT")
-                subdirs = ["Dobre", "Średnie", "Słabe"]
-                
-                # Sprawdzenie czy struktura już istnieje
-                already_exists = os.path.exists(sort_path) and all(
-                    os.path.exists(os.path.join(sort_path, sd)) for sd in subdirs
-                )
+                self.engine.set_destination_folder(folder)
 
                 try:
-                    file_manager.create_directories(sort_path, subdirs)
+                    self.engine.initialize_sorting_structure()
                     self.label_info_create.setVisible(False)
                 except OSError as e:
                     QMessageBox.critical(self, translator.get("error_title"), translator.get("msg_error_create").format(e=e))
@@ -300,45 +246,13 @@ class AyoSortApp(QMainWindow):
         
         if hasattr(self, 'current_theme_name') and self.current_theme_name in self.themes:
             t = self.themes[self.current_theme_name]
-            if isinstance(t, str):
-                dialog.setStyleSheet(t)
-            else:
-                dialog.setStyleSheet(f"""
-                    QFileDialog {{ background-color: {t['bg']}; color: {t['text']}; }}
-                    QWidget {{ color: {t['text']}; }}
-                    QTreeView, QListView {{ 
-                        background-color: {t['widget']}; 
-                        color: {t['text']}; 
-                        border: 1px solid {t['border']};
-                    }}
-                    QPushButton {{
-                        background-color: {t['widget']};
-                        color: {t['text']};
-                        border: 1px solid {t['border']};
-                        border-radius: 4px;
-                        padding: 5px;
-                    }}
-                    QPushButton:hover {{
-                        background-color: {t['border']}; 
-                    }}
-                    QComboBox {{
-                        background-color: {t['widget']};
-                        color: {t['text']};
-                        border: 1px solid {t['border']};
-                    }}
-                    QLineEdit {{
-                        background-color: {t['widget']};
-                        color: {t['text']};
-                        border: 1px solid {t['border']};
-                    }}
-                """)
+            apply_dialog_theme(dialog, t)
 
         if dialog.exec():
             selected_files = dialog.selectedFiles()
             if selected_files:
                 folder = selected_files[0]
-                self.source_folder = folder
-                self._load_images()
+                self._load_images(folder_path=folder)
                 self._prepare_folders()
                 self._show_current_image()
                 self.label_info_select.setVisible(False)
@@ -346,7 +260,7 @@ class AyoSortApp(QMainWindow):
     def open_settings(self):
         dialog = SettingsDialog(self, current_lang=self.current_language)
         
-        # Ustawienie aktualnego wyboru i wyglądu okna ustawień
+        # Ustawienie aktualnego wyboru motywu
         if hasattr(self, 'current_theme_name'):
             index = dialog.theme_combo.findText(self.current_theme_name)
             if index >= 0:
@@ -361,13 +275,13 @@ class AyoSortApp(QMainWindow):
         if dialog.exec():
             selected_theme = dialog.theme_combo.currentData()
             self.apply_theme(selected_theme)
+            self.engine.set_theme(selected_theme)
             
             # Zapisanie i zastosowanie języka
             selected_lang_data = dialog.lang_combo.currentData()
             if selected_lang_data:
-                self.current_language = selected_lang_data
-                translator.load_language(self.current_language)
-                self._save_config()
+                self.engine.set_language(selected_lang_data)
+                translator.load_language(selected_lang_data)
 
     def apply_theme(self, theme_name):
         if theme_name not in self.themes:
@@ -419,49 +333,51 @@ class AyoSortApp(QMainWindow):
         """)
         
         # Aktualizacja koloru tekstu logo (jeśli nie jest obrazkiem)
-        if self.logo_label.text() == "AyoSORT":
+        if self.logo_label.text().startswith("AyoSORT"):
              self.logo_label.setStyleSheet(f"color: {t['text']}; font-weight: bold;")
 
-    def _load_images(self, specific_files=None):
+    def _load_images(self, specific_files=None, folder_path=None):
         try:
             if specific_files:
-                self.images = specific_files
+                # Jeśli mamy listę plików (z drag & drop), folder jest już w engine.source_folder
+                self.engine.set_specific_images(self.engine.source_folder, specific_files)
+            elif folder_path:
+                self.engine.load_images_from_folder(folder_path)
             else:
-                self.images = [f for f in os.listdir(self.source_folder) if os.path.splitext(f)[1].lower() in self.image_extensions]
+                # Przeładowanie obecnego folderu
+                self.engine.load_images_from_folder(self.engine.source_folder)
             
-            self.images.sort()
-            self.current_index = 0
-            if not self.images:
+            if not self.engine.has_images():
                 QMessageBox.information(self, translator.get("info_title"), translator.get("msg_info_no_images_folder"))
                 self.file_count_label.setVisible(False)
             else:
-                sample_count = min(len(self.images), 5)
-                random_files = random.sample(self.images, sample_count)
-                random_paths = [os.path.join(self.source_folder, f) for f in random_files]
+                random_paths = self.engine.get_random_samples()
                 self.fan_widget.update_images(random_paths)
-                self.file_count_label.setText(translator.get("label_file_count").format(count=len(self.images)))
+                self.file_count_label.setText(translator.get("label_file_count").format(count=len(self.engine.images)))
                 self.file_count_label.setVisible(True)
         except OSError as e:
              QMessageBox.critical(self, translator.get("error_title"), translator.get("msg_error_access").format(e=e))
 
     def _prepare_folders(self):
-        for folder_name in self.categories.values():
-            path = os.path.join(self.source_folder, folder_name)
+        # Tworzenie folderów lokalnych w źródle (jeśli nie ma destination_folder)
+        # Logika ta może być też w engine, ale tutaj jest to "przygotowanie widoku"
+        for folder_name in self.engine.categories.values():
+            path = os.path.join(self.engine.source_folder, folder_name)
             os.makedirs(path, exist_ok=True)
 
     def _show_current_image(self):
-        if self.current_index < len(self.images):
-            filename = self.images[self.current_index]
-            path = os.path.join(self.source_folder, filename)
+        path = self.engine.get_current_image_path()
+        if path:
             self.current_pixmap = QPixmap(path)
             if not self.current_pixmap.isNull():
                 self._update_image_display()
-                self.setWindowTitle(f"AyoSORT - {filename} ({self.current_index + 1}/{len(self.images)})")
+                filename = self.engine.get_current_filename()
+                self.setWindowTitle(f"AyoSORT v{self.VERSION} - {filename} ({self.engine.get_progress_string()})")
             else:
-                self.image_label.setText(translator.get("msg_error_load").format(filename=filename))
+                self.image_label.setText(translator.get("msg_error_load").format(filename=path))
         else:
             self.image_label.setText(translator.get("label_end_sorting"))
-            self.setWindowTitle(translator.get("window_title_end"))
+            self.setWindowTitle(f"{translator.get('window_title_end')} v{self.VERSION}")
 
     def _update_image_display(self):
         if self.current_pixmap and not self.current_pixmap.isNull():
@@ -469,16 +385,12 @@ class AyoSortApp(QMainWindow):
             self.image_label.setPixmap(scaled_pixmap)
 
     def sort_current(self, category_key):
-        if self.current_index >= len(self.images): return
-        dest_folder = self.categories[category_key]
-        filename = self.images[self.current_index]
-        src_path = os.path.join(self.source_folder, filename)
-        
-        target_root = self.destination_folder if self.destination_folder else self.source_folder
-        dest_path = os.path.join(target_root, dest_folder, filename)
+        if self.engine.is_finished(): return
         
         try:
-            file_manager.copy_image(src_path, dest_path)
+            success = self.engine.sort_current_image(category_key)
+            if not success:
+                return
         except Exception as e:
             QMessageBox.critical(self, translator.get("error_title"), translator.get("msg_error_copy").format(e=e))
             return
@@ -497,7 +409,6 @@ class AyoSortApp(QMainWindow):
             elif category_key == "Kiepskie":
                 AnimatedOverlay(self, pm_copy, geom, "#F44336", 0, QPoint(0, 450))
 
-        self.current_index += 1
         self._show_current_image()
 
     def keyPressEvent(self, event: QKeyEvent):
@@ -511,7 +422,7 @@ class AyoSortApp(QMainWindow):
         super().resizeEvent(event)
 
     def _update_ui_texts(self):
-        self.setWindowTitle(translator.get("window_title"))
+        self.setWindowTitle(f"{translator.get('window_title')} v{self.VERSION}")
         self.btn_create_catalog.setText(translator.get("btn_create_catalog"))
         self.btn_select_folder.setText(translator.get("btn_select_folder"))
         self.btn_good.setToolTip(translator.get("tooltip_good"))
@@ -526,34 +437,10 @@ class AyoSortApp(QMainWindow):
         if self.current_pixmap is None:
             self.image_label.setText(translator.get("drop_label_text"))
 
-    def _load_config(self):
-        if os.path.exists(self.config_file):
-            try:
-                with open(self.config_file, 'r', encoding='utf-8') as f:
-                    config = json.load(f)
-                    self.destination_folder = config.get("destination_folder")
-                    self.current_language = config.get("language", "pl")
-            except Exception:
-                pass
-
-    def _save_config(self):
-        config = {}
-        if os.path.exists(self.config_file):
-            try:
-                with open(self.config_file, 'r', encoding='utf-8') as f:
-                    config = json.load(f)
-            except Exception:
-                pass
-        
-        config["destination_folder"] = self.destination_folder
-        config["language"] = self.current_language
-        
-        try:
-            with open(self.config_file, 'w', encoding='utf-8') as f:
-                json.dump(config, f, indent=4)
-        except Exception:
-            pass
+    @property
+    def current_language(self):
+        return self.engine.current_language
 
     def _check_initial_state(self):
-        if self.destination_folder and os.path.exists(self.destination_folder):
+        if self.engine.destination_folder and os.path.exists(self.engine.destination_folder):
             self.label_info_create.setVisible(False)

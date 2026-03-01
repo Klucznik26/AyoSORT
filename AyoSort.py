@@ -9,6 +9,8 @@ from gui.app_window import AyoSortApp
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    app.setApplicationName("AyoSORT")
+    app.setApplicationVersion("1.3.0")
     window = AyoSortApp()
     window.show()
     sys.exit(app.exec())

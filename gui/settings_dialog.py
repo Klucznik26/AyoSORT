@@ -19,6 +19,11 @@ class SettingsDialog(QDialog):
         languages = [
             ("Polski", "🇵🇱", "pl"),
             ("English (angielski)", "🇬🇧", "en"),
+            ("Français (francuski)", "🇫🇷", "fr"),
+            ("Italiano (włoski)", "🇮🇹", "it"),
+            ("Ελληνικά (grecki)", "🇬🇷", "el"),
+            ("Nederlands (holenderski)", "🇳🇱", "nl"),
+            ("Íslenska (islandzki)", "🇮🇸", "is"),
             ("Українська (ukraiński)", "🇺🇦", "uk"),
             ("Latviešu (łotewski)", "🇱🇻", "lv"),
             ("Lietuvių (litewski)", "🇱🇹", "lt"),
