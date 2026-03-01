@@ -7,13 +7,9 @@
 **AyoSORT** is a tool created out of a passion for order and technology. The application allows for fast and intuitive categorization of image files, offering a modern graphical interface built using Python and Qt.
 
 ## 📸 Program Preview
-| [Dark Theme](screenshots/main_view_dark.png) | [Light Theme](screenshots/main_view_light.png) | [Creative Theme](screenshots/main_view_creative.png) |
-|:---:|:---:|:---:|
-| [![Dark](screenshots/main_view_dark.png)](screenshots/main_view_dark.png) | [![Light](screenshots/main_view_light.png)](screenshots/main_view_light.png) | [![Creative](screenshots/main_view_creative.png)](screenshots/main_view_creative.png) |
-
-| [Relax Theme](screenshots/main_view_relax.png) | [System Theme](screenshots/main_view_system.png) | |
-|:---:|:---:|:---:|
-| [![Relax](screenshots/main_view_relax.png)](screenshots/main_view_relax.png) | [![System](screenshots/main_view_system.png)](screenshots/main_view_system.png) | |
+| [Dark Theme](screenshots/main_view_dark.png) | [Light Theme](screenshots/main_view_light.png) | [Creative Theme](screenshots/main_view_creative.png) | [Relax Theme](screenshots/main_view_relax.png) | [System Theme](screenshots/main_view_system.png) |
+|:---:|:---:|:---:|:---:|:---:|
+| [![Dark](screenshots/main_view_dark.png)](screenshots/main_view_dark.png) | [![Light](screenshots/main_view_light.png)](screenshots/main_view_light.png) | [![Creative](screenshots/main_view_creative.png)](screenshots/main_view_creative.png) | [![Relax](screenshots/main_view_relax.png)](screenshots/main_view_relax.png) | [![System](screenshots/main_view_system.png)](screenshots/main_view_system.png) |
 
 ### 🌐 Personalization & Localization
 Manage your photos in your preferred style and language:
