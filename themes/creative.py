@@ -1,54 +1,27 @@
-theme = """
-QMainWindow {
-    background-color: #1B262C;
+THEME = {
+    "name": "creative",
+    "bg_main": "#4A1E2D",
+    "bg_panel": "#1E2129",
+    "bg_panel_alt": "#252833",
+    "text": "#E6E8FF",
+    "text_muted": "#8F93B0",
+    "title": "#8A5CFF",
+    "accent": "#8A5CFF",
+    "accent_hover": "#B88CFF",
+    "accent_pressed": "#6A3AB2",
+    "button_bg": "#2B2F3A",
+    "button_hover": "#3A3F55",
+    "button_pressed": "#1F222B",
+    "button_disabled_bg": "#1E2129",
+    "button_disabled_text": "#8F93B0",
+    "field_bg": "#252833",
+    "field_alt_bg": "#252833",
+    "selection_bg": "#8A5CFF",
+    "selection_text": "#FFFFFF",
+    "border": "#3A3F55",
+    "hover": "#3A3F55",
+    "danger": "#ff3333",
+    "danger_hover": "rgba(255, 51, 51, 0.15)",
+    "progress_bg": "#2B2F3A",
+    "corner_bg": "rgba(138, 92, 255, 0.08)",
 }
-
-QPushButton {
-    padding: 8px 14px;
-    background-color: #0F4C75;
-    border: 1px solid #3282B8;
-    border-radius: 6px;
-    color: #BBE1FA;
-    font-weight: bold;
-}
-
-QPushButton:hover {
-    background-color: #3282B8;
-    color: #FFFFFF;
-}
-
-QPushButton:pressed {
-    background-color: #0F4C75;
-    border: 2px solid #BBE1FA;
-}
-
-QPushButton:disabled {
-    background-color: #243441;
-    color: #566E7A;
-    border: 1px solid #2C3E50;
-}
-
-QLabel {
-    color: #BBE1FA;
-}
-
-/* Styl dla pola, do którego przeciągasz obrazy */
-ImageDropLabel {
-    background-color: #0F4C75;
-    border: 2px dashed #3282B8;
-    border-radius: 10px;
-    color: #BBE1FA;
-    font-size: 18px;
-}
-
-QDialog {
-    background-color: #1B262C;
-}
-
-QComboBox {
-    background-color: #0F4C75;
-    color: #BBE1FA;
-    border: 1px solid #3282B8;
-    padding: 4px;
-}
-"""

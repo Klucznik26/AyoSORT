@@ -1,16 +1,12 @@
 import os
 import json
 import random
+import re
 from core import file_manager
 
 class AyoSortEngine:
     def __init__(self):
-        # Konfiguracja kategorii i folderów
-        self.categories = {
-            "Dobre": os.path.join("SORT", "Dobre"),
-            "Może być": os.path.join("SORT", "Średnie"),
-            "Kiepskie": os.path.join("SORT", "Słabe")
-        }
+        self.category_order = ["good", "mid", "bad"]
         
         # Obsługiwane rozszerzenia
         self.image_extensions = {".jpg", ".jpeg", ".png", ".bmp", ".gif", ".webp", ".wep", ".tif", ".tiff", ".ico"}
@@ -22,22 +18,28 @@ class AyoSortEngine:
         self.current_language = "pl"
         self.current_theme = "dark"
         
-        # Ścieżka do pliku konfiguracyjnego
-        self.config_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config.json")
+        self.base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        self.config_dir = os.path.join(self.base_dir, "config")
+        self.config_file = os.path.join(self.config_dir, "config.json")
+        self.legacy_config_file = os.path.join(self.base_dir, "config.json")
         self.load_config()
+        self.categories = self._build_categories()
 
     def load_config(self):
-        if os.path.exists(self.config_file):
+        source = self.config_file if os.path.exists(self.config_file) else self.legacy_config_file
+        if os.path.exists(source):
             try:
-                with open(self.config_file, 'r', encoding='utf-8') as f:
+                with open(source, 'r', encoding='utf-8') as f:
                     config = json.load(f)
                     self.destination_folder = config.get("destination_folder")
                     self.current_language = config.get("language", "pl")
                     self.current_theme = config.get("theme", "dark")
             except Exception:
                 pass
+        self.save_config()
 
     def save_config(self):
+        os.makedirs(self.config_dir, exist_ok=True)
         config = {}
         if os.path.exists(self.config_file):
             try:
@@ -58,6 +60,7 @@ class AyoSortEngine:
 
     def set_language(self, lang_code):
         self.current_language = lang_code
+        self.categories = self._build_categories()
         self.save_config()
 
     def set_theme(self, theme_name):
@@ -74,7 +77,7 @@ class AyoSortEngine:
             raise ValueError("Destination folder not set")
             
         sort_path = os.path.join(self.destination_folder, "SORT")
-        subdirs = ["Dobre", "Średnie", "Słabe"]
+        subdirs = [self._category_names_for_lang(self.current_language)[k] for k in self.category_order]
         file_manager.create_directories(sort_path, subdirs)
 
     def load_images_from_folder(self, folder):
@@ -143,3 +146,59 @@ class AyoSortEngine:
         # Przejście do następnego
         self.current_index += 1
         return True
+
+    def _build_categories(self):
+        names = self._category_names_for_lang(self.current_language)
+        return {key: os.path.join("SORT", names[key]) for key in self.category_order}
+
+    def _category_names_for_lang(self, lang_code):
+        # Stabilne domyślne nazwy (PL historyczne + EN fallback)
+        names = {
+            "good": "Dobre" if lang_code == "pl" else "Good",
+            "mid": "Średnie" if lang_code == "pl" else "Average",
+            "bad": "Słabe" if lang_code == "pl" else "Bad",
+        }
+
+        i18n_path = os.path.join(self.base_dir, "i18n", f"{lang_code}.json")
+        try:
+            with open(i18n_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except Exception:
+            return names
+
+        # Jeśli są jawne klucze folderów, użyj ich.
+        # Dla PL zachowujemy historyczne nazwy katalogów.
+        # Dla pozostałych języków fallback to pierwszy wyraz z tooltipów.
+        names["good"] = self._normalize_folder_name(
+            data.get("folder_good")
+            or (None if lang_code == "pl" else self._first_word(data.get("tooltip_good")))
+            or names["good"]
+        )
+        names["mid"] = self._normalize_folder_name(
+            data.get("folder_mid")
+            or (None if lang_code == "pl" else self._first_word(data.get("tooltip_mid")))
+            or names["mid"]
+        )
+        names["bad"] = self._normalize_folder_name(
+            data.get("folder_bad")
+            or (None if lang_code == "pl" else self._first_word(data.get("tooltip_bad")))
+            or names["bad"]
+        )
+        return names
+
+    @staticmethod
+    def _first_word(text):
+        if not text:
+            return ""
+        text = text.strip()
+        if not text:
+            return ""
+        token = text.split()[0]
+        token = re.sub(r"[^\w\-ąćęłńóśźżА-Яа-яЄєІіЇїҐґ]+$", "", token)
+        return token
+
+    @staticmethod
+    def _normalize_folder_name(name):
+        # Unikamy separatorów ścieżek i pustych nazw.
+        clean = str(name).replace("/", "_").replace("\\", "_").strip()
+        return clean or "Category"

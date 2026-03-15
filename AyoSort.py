@@ -1,16 +1,20 @@
 import sys
 import os
 
-# Dodanie katalogu głównego projektu do sys.path, aby Python widział pakiety lokalne
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from PySide6.QtWidgets import QApplication
-from gui.app_window import AyoSortApp
+from ui_main import MainWindow
 
-if __name__ == "__main__":
+
+def main():
     app = QApplication(sys.argv)
     app.setApplicationName("AyoSORT")
-    app.setApplicationVersion("1.3.0")
-    window = AyoSortApp()
+    app.setApplicationVersion("1.3.1")
+    window = MainWindow()
     window.show()
     sys.exit(app.exec())
+
+
+if __name__ == "__main__":
+    main()

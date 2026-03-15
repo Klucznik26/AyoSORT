@@ -1,148 +1,27 @@
-"""
-Motyw Systemowy (Native Palette)
-"""
-
-_MAIN_STYLE = """
-/* =========================
-   MOTYW SYSTEMOWY
-   ========================= */
-
-QMainWindow {
-    background-color: palette(window);
+THEME = {
+    "name": "system",
+    "bg_main": "#ececec",
+    "bg_panel": "#f8f8f8",
+    "bg_panel_alt": "#ffffff",
+    "text": "#222222",
+    "text_muted": "#4e4e4e",
+    "title": "#4f46e5",
+    "accent": "#4f46e5",
+    "accent_hover": "#6366f1",
+    "accent_pressed": "#3730a3",
+    "button_bg": "#f8f8f8",
+    "button_hover": "#efefef",
+    "button_pressed": "#e3e3e3",
+    "button_disabled_bg": "#f1f1f1",
+    "button_disabled_text": "#7a7a7a",
+    "field_bg": "#ffffff",
+    "field_alt_bg": "#ffffff",
+    "selection_bg": "#4f46e5",
+    "selection_text": "#ffffff",
+    "border": "rgba(0, 0, 0, 0.12)",
+    "hover": "rgba(79, 70, 229, 0.12)",
+    "danger": "#d11a2a",
+    "danger_hover": "rgba(209, 26, 42, 0.14)",
+    "progress_bg": "rgba(0, 0, 0, 0.08)",
+    "corner_bg": "rgba(0, 0, 0, 0.02)",
 }
-
-QDialog {
-    background-color: palette(window);
-}
-
-/* =========================
-   RAMKI / PANELE
-   ========================= */
-QFrame {
-    background-color: palette(window);
-    border: 1px solid palette(mid);
-}
-
-/* =========================
-   TEKST
-   ========================= */
-QLabel {
-    color: palette(windowText);
-}
-
-QLabel[secondary="true"] {
-    color: palette(text);
-}
-
-QLabel#scaleLabel {
-    color: palette(windowText);
-}
-
-QLabel#statusLabel {
-    color: palette(text);
-    font-weight: bold;
-    font-size: 13px;
-}
-
-/* =========================
-   PRZYCISKI
-   ========================= */
-QPushButton {
-    padding: 8px 14px;
-    background-color: palette(button);
-    border: 1px solid palette(mid);
-    border-radius: 6px;
-    color: palette(buttonText);
-    font-weight: bold;
-}
-
-QPushButton:hover {
-    background-color: palette(light);
-}
-
-QPushButton:pressed {
-    background-color: palette(midlight);
-}
-
-QPushButton:disabled {
-    background-color: palette(window);
-    color: palette(disabled:buttonText);
-    border: 1px solid palette(mid);
-}
-
-/* =========================
-   PRZYCISK WYKONAJ (AKCENT)
-   ========================= */
-QPushButton#runButton {
-    background-color: palette(highlight);
-    border: none;
-    color: palette(highlightedText);
-}
-
-QPushButton#runButton:hover {
-    background-color: palette(highlight);
-}
-
-QPushButton#runButton:pressed {
-    background-color: palette(dark);
-}
-
-/* =========================
-   SUWAK SKALI
-   ========================= */
-QSlider::groove:horizontal {
-    height: 6px;
-    background: palette(mid);
-    border-radius: 3px;
-}
-
-QSlider::handle:horizontal {
-    background: palette(button);
-    width: 16px;
-    margin: -5px 0;
-    border-radius: 8px;
-    border: 1px solid palette(mid);
-}
-
-QSlider::sub-page:horizontal {
-    background: palette(highlight);
-    border-radius: 3px;
-}
-
-QSlider::add-page:horizontal {
-    background: palette(mid);
-    border-radius: 3px;
-}
-
-/* =========================
-   KONTROLKI FORMULARZY
-   ========================= */
-QComboBox {
-    background-color: palette(button);
-    color: palette(buttonText);
-    border: 1px solid palette(mid);
-    padding: 4px;
-}
-
-QComboBox::drop-down {
-    border: none;
-}
-
-QListView, QTreeView {
-    background-color: palette(base);
-    color: palette(text);
-    border: 1px solid palette(mid);
-}
-"""
-
-_DROP_ZONE_STYLE = """
-    QLabel#dropArea {
-        background-color: palette(base);
-        border: 2px dashed palette(mid);
-        border-radius: 10px;
-        color: palette(text);
-        font-size: 18px;
-    }
-"""
-
-theme = _MAIN_STYLE + "\n" + _DROP_ZONE_STYLE

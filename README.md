@@ -1,4 +1,4 @@
-# AyoSORT 1.3.0 - Intelligent Image Sorting
+# AyoSORT 1.3.1 - Intelligent Image Sorting
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)
@@ -15,7 +15,7 @@
 Manage your photos in your preferred style and language:
 | Theme Selection | Language Selection |
 |:---:|:---:|
-| [![Theme Selection](screenshots/theme_selection_menu.png)](screenshots/theme_selection_menu.png) | [![Language Selection](screenshots/language_selection_menu.png)](screenshots/language_selection_menu.png) |
+| [![Theme Selection](screenshots/selection_theme.png)](screenshots/theme_selection_menu.png) | [![Language Selection](screenshots/language_selection_menu.png)](screenshots/language_selection_menu.png) |
 
 ## 🚀 Features
 * **Intuitive Management**: Quickly create sorting directories directly from the application.
@@ -25,25 +25,24 @@ Manage your photos in your preferred style and language:
 * **Visual Identity**: Dedicated application icon included in the `assets` directory.
 
 ## 🌐 Supported Languages
-AyoSORT displays language names in their native alphabets for easier navigation:
+AyoMONITOR currently supports 42 interface languages:
 
-* 🇵🇱 **Polski** (Polish)
-* 🇬🇧 **English**
-* 🇫🇷 **Français** (French)
-* 🇮🇹 **Italiano** (Italian)
-* 🇬🇷 **Ελληνικά** (Greek)
-* 🇳🇱 **Nederlands** (Dutch)
-* 🇮🇸 **Íslenska** (Icelandic)
-* 🇺🇦 **Українська** (Ukrainian)
-* 🇱🇻 **Latviešu** (Latvian)
-* 🇱🇹 **Lietuvių** (Lithuanian)
-* 🇪🇪 **Eesti** (Estonian)
-* 🇵🇹 **Português** (Portuguese)
-* 🇨🇿 **Čeština** (Czech)
-* 🇸🇮 **Slovenščina** (Slovenian)
-* 🇬🇪 **ქართული** (Georgian)
-* 🇷🇴 **Română** (Romanian)
-* 🇪🇸 **Español** (Spanish)
+| | | |
+|---|---|---|
+| 🇵🇱 Polish | 🇬🇧 English | 🇧🇬 Bulgarian |
+| 🇨🇿 Czech | 🇩🇰 Danish | 🇩🇪 German |
+| 🇪🇸 Spanish | 🇪🇪 Estonian | 🇫🇮 Finnish |
+| 🇫🇷 French | 🇭🇺 Hungarian | 🇮🇸 Icelandic |
+| 🇮🇹 Italian | 🇱🇹 Lithuanian | 🇱🇻 Latvian |
+| 🇳🇱 Dutch | 🇳🇴 Norwegian | 🇵🇹 Portuguese |
+| 🇷🇴 Romanian | 🇸🇰 Slovak | 🇸🇪 Swedish |
+| 🇺🇦 Ukrainian | 🇬🇷 Greek | 🇬🇪 Georgian |
+| 🇹🇷 Turkish | 🇷🇸 Serbian | 🇸🇮 Slovenian |
+| 🇪🇸 Catalan | 🇭🇷 Croatian | 🇦🇱 Albanian |
+| 🇲🇹 Maltese | 🇲🇰 Macedonian | 🇧🇦 Bosnian |
+| 🇦🇲 Armenian | 🇦🇿 Azerbaijani | 🇱🇺 Luxembourgish |
+| 🇮🇪 Irish | 🇰🇿 Kazakh | 🇪🇸 Galician |
+| 🇪🇸 Basque | 🇫🇷 Corsican | 🇰🇪 Swahili |
 
 ## 🛠️ Technology
 The application is designed for performance and seamless integration with the desktop environment:
@@ -51,11 +50,14 @@ The application is designed for performance and seamless integration with the de
 * **GUI**: PyQt / PySide (utilizing QSS stylesheets for full visual control).
 * **Environment**: Developed on **Fedora** with **KDE Plasma** using **ASUS TUF Gaming** hardware.
 
-## 📦 Ayo Ecosystem
+## 📦 Ayo Ecosystemgit add README.md
+git rebase --continue
+
 AyoSORT is part of a broader family of tools supporting daily workflows:
 * **[Ayo-UP](https://github.com/Klucznik26/Ayo-UP)**: A dedicated tool for efficient file uploading and updates.
 * **[AyoCONVERT](https://github.com/Klucznik26/AyoCONVERT)**: A convenient file converter focusing on data quality.
-* **[AyoARCH](https://github.com/Klucznik26/AyoARCH)**: A solution for secure and organized resource archiving.
+* **[AyoARCHI](https://github.com/Klucznik26/AyoARCH)**: A solution for secure and organized resource archiving.
+* **[AyoMONITOR](https://github.com/Klucznik26/AyoARCHI)**:A lightweight system hardware monitor for Linux.
 
 Full information about the projects can be found on the official website: **[AyoWWW](https://klucznik26.github.io/AyoWWW/)**.
 
