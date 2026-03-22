@@ -28,6 +28,7 @@
     "label_theme": "თემა",
     "btn_cancel": "გაუქმება",
     "btn_ok": "კარგი",
+    "btn_apply": "გამოყენება",
     "info_title": "ინფო",
     "success_title": "წარმატება",
     "error_title": "შეცდომა",
@@ -89,5 +90,6 @@
     "lang_eu": "Basque",
     "lang_co": "Corsican",
     "lang_kk": "Kazakh",
-    "lang_sw": "Swahili"
+    "lang_sw": "Swahili",
+    "lang_ja": "Japanese"
 }

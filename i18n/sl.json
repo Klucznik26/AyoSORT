@@ -28,6 +28,7 @@
     "label_theme": "Tema",
     "btn_cancel": "Prekliči",
     "btn_ok": "V redu",
+    "btn_apply": "Uporabi",
     "info_title": "Info",
     "success_title": "Uspeh",
     "error_title": "Napaka",
@@ -89,5 +90,6 @@
     "lang_eu": "Basque",
     "lang_co": "Corsican",
     "lang_kk": "Kazakh",
-    "lang_sw": "Swahili"
+    "lang_sw": "Swahili",
+    "lang_ja": "Japanese"
 }

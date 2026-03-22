@@ -28,6 +28,7 @@
     "label_theme": "Teema",
     "btn_cancel": "Tühista",
     "btn_ok": "OK",
+    "btn_apply": "Rakenda",
     "info_title": "Info",
     "success_title": "Edu",
     "error_title": "Viga",
@@ -89,5 +90,6 @@
     "lang_eu": "Basque",
     "lang_co": "Corsican",
     "lang_kk": "Kazakh",
-    "lang_sw": "Swahili"
+    "lang_sw": "Swahili",
+    "lang_ja": "Japanese"
 }

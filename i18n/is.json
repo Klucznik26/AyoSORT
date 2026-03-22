@@ -28,6 +28,7 @@
     "label_theme": "Þema",
     "btn_cancel": "Hætta við",
     "btn_ok": "Í lagi",
+    "btn_apply": "Virkja",
     "info_title": "Upplýsingar",
     "success_title": "Tókst",
     "error_title": "Villa",
@@ -89,5 +90,6 @@
     "lang_eu": "Basque",
     "lang_co": "Corsican",
     "lang_kk": "Kazakh",
-    "lang_sw": "Swahili"
+    "lang_sw": "Swahili",
+    "lang_ja": "Japanese"
 }

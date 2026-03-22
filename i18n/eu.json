@@ -28,6 +28,7 @@
     "label_theme": "Gaia",
     "btn_cancel": "Utzi",
     "btn_ok": "Ados",
+    "btn_apply": "Aplikatu",
     "info_title": "Info",
     "success_title": "Arrakasta",
     "error_title": "Errorea",
@@ -89,5 +90,6 @@
     "lang_eu": "Euskara",
     "lang_co": "Corsican",
     "lang_kk": "Kazakh",
-    "lang_sw": "Swahili"
+    "lang_sw": "Swahili",
+    "lang_ja": "Japanese"
 }

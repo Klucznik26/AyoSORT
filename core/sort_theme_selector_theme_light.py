@@ -1,0 +1,10 @@
+THEME = {
+    "name": "light", "bg_main": "#F4EFE6", "bg_panel": "#FFFFFF", "bg_panel_alt": "#F0E8DC",
+    "text": "#2F2620", "text_muted": "#7A6B5C", "title": "#C96A3A", "accent": "#C96A3A",
+    "accent_hover": "#D97A4A", "accent_pressed": "#B95A2A", "button_bg": "#F0E8DC",
+    "button_hover": "#E6DED4", "button_pressed": "#DCD4CA", "button_disabled_bg": "#F4EFE6",
+    "button_disabled_text": "#7A6B5C", "field_bg": "#F0E8DC", "field_alt_bg": "#FFFFFF",
+    "selection_bg": "#C96A3A", "selection_text": "#FFFFFF", "border": "#D6C8B4",
+    "hover": "#E6DED4", "danger": "#e74c3c", "danger_hover": "rgba(231, 76, 60, 0.15)",
+    "progress_bg": "#F0E8DC", "corner_bg": "rgba(0, 0, 0, 0.02)",
+}

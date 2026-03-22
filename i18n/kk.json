@@ -28,6 +28,7 @@
     "label_theme": "Тақырып",
     "btn_cancel": "Бас тарту",
     "btn_ok": "OK",
+    "btn_apply": "Қолдану",
     "info_title": "Ақпарат",
     "success_title": "Сәтті",
     "error_title": "Қате",
@@ -89,5 +90,6 @@
     "lang_eu": "Basque",
     "lang_co": "Corsican",
     "lang_kk": "Қазақша",
-    "lang_sw": "Swahili"
+    "lang_sw": "Swahili",
+    "lang_ja": "Japanese"
 }

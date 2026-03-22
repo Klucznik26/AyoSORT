@@ -28,6 +28,7 @@
     "label_theme": "Mandhari",
     "btn_cancel": "Ghairi",
     "btn_ok": "Sawa",
+    "btn_apply": "Tumia",
     "info_title": "Maelezo",
     "success_title": "Mafanikio",
     "error_title": "Hitilafu",
@@ -89,5 +90,6 @@
     "lang_eu": "Basque",
     "lang_co": "Corsican",
     "lang_kk": "Kazakh",
-    "lang_sw": "Kiswahili"
+    "lang_sw": "Kiswahili",
+    "lang_ja": "Japanese"
 }

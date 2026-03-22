@@ -28,6 +28,7 @@
     "label_theme": "Тема",
     "btn_cancel": "Откажи",
     "btn_ok": "Во ред",
+    "btn_apply": "Примени",
     "info_title": "Инфо",
     "success_title": "Успех",
     "error_title": "Грешка",
@@ -89,5 +90,6 @@
     "lang_eu": "Basque",
     "lang_co": "Corsican",
     "lang_kk": "Kazakh",
-    "lang_sw": "Swahili"
+    "lang_sw": "Swahili",
+    "lang_ja": "Japanese"
 }

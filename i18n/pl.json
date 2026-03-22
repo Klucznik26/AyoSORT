@@ -28,6 +28,7 @@
     "label_theme": "Wybór motywu",
     "btn_cancel": "Anuluj",
     "btn_ok": "Zatwierdź",
+    "btn_apply": "Zastosuj",
     "info_title": "Info",
     "success_title": "Sukces",
     "error_title": "Błąd",
@@ -89,5 +90,6 @@
     "lang_eu": "baskijski",
     "lang_co": "korsykański",
     "lang_kk": "kazachski",
-    "lang_sw": "suahili"
+    "lang_sw": "suahili",
+    "lang_ja": "japoński"
 }

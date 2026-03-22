@@ -28,6 +28,7 @@
     "label_theme": "Tema",
     "btn_cancel": "Cancelar",
     "btn_ok": "Aceptar",
+    "btn_apply": "Aplicar",
     "info_title": "Info",
     "success_title": "Éxito",
     "error_title": "Error",
@@ -89,5 +90,6 @@
     "lang_eu": "Basque",
     "lang_co": "Corsican",
     "lang_kk": "Kazakh",
-    "lang_sw": "Swahili"
+    "lang_sw": "Swahili",
+    "lang_ja": "Japanese"
 }

@@ -28,6 +28,7 @@
     "label_theme": "Mövzu",
     "btn_cancel": "Legv et",
     "btn_ok": "OK",
+    "btn_apply": "Tətbiq et",
     "info_title": "Melumat",
     "success_title": "Ugurlu",
     "error_title": "Xeta",
@@ -89,5 +90,6 @@
     "lang_eu": "Basque",
     "lang_co": "Corsican",
     "lang_kk": "Kazakh",
-    "lang_sw": "Swahili"
+    "lang_sw": "Swahili",
+    "lang_ja": "Japanese"
 }
