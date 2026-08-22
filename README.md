@@ -1,4 +1,4 @@
-# AyoSORT 1.7.0 – Intelligent Image Sorting 🚀🖼️
+# AyoSORT 1.7.1 – Intelligent Image Sorting 🚀🖼️
 
 AyoSORT is a fast and lightweight desktop application designed for intelligent image categorization.
 
@@ -24,7 +24,16 @@ Part of the **Ayo Ecosystem**.
 
 ---
 
-## 🆕 What’s New in 1.7.0
+## 🆕 What’s New in 1.7.1
+
+### Safer and smoother sorting
+
+* Existing files are never overwritten; a unique filename is selected automatically.
+* Undo only removes the unchanged copy created by AyoSORT.
+* Large copies run outside the GUI thread.
+* Category folder names are validated and kept inside the `SORT` directory.
+
+## What’s New in 1.7.0
 
 ### 🎨 Redesigned "Ayo Dark" Theme & UI Enhancements
 
@@ -98,7 +107,7 @@ All dialogs use non-native Qt rendering for full styling and localization contro
 
 ---
 
-## 🌍 Supported Languages (43)
+## 🌍 Supported Languages (49)
 
 |                  |                |                    |                 |
 | ---------------- | -------------- | ------------------ | --------------- |
@@ -112,7 +121,9 @@ All dialogs use non-native Qt rendering for full styling and localization contro
 | 🇫🇷 Corsican    | 🇩🇪 German    | 🇲🇰 Macedonian    | 🇸🇪 Swedish    |
 | 🇭🇷 Croatian    | 🇬🇷 Greek     | 🇲🇹 Maltese       | 🇹🇷 Turkish    |
 | 🇨🇿 Czech       | 🇭🇺 Hungarian | 🇳🇴 Norwegian     | 🇺🇦 Ukrainian  |
-| 🇩🇰 Danish      | 🇮🇸 Icelandic | 🇵🇱 Polish        |                 |
+| 🇩🇰 Danish      | 🇮🇸 Icelandic | 🇵🇱 Polish        | 🇮🇳 Hindi      |
+| 🇲🇪 Montenegrin | 🇲🇩 Moldovan  | 🇹🇯 Tajik         | 🇺🇿 Uzbek      |
+| 🌍 Interslavic  |                |                    |                 |
 
 ---
 
@@ -162,7 +173,7 @@ cd AyoSORT
 ### 2️⃣ Install dependencies
 
 ```bash
-pip install PySide6
+python -m pip install -r requirements.txt
 ```
 
 ### 3️⃣ Run application

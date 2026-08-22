@@ -1,17 +1,25 @@
-import os
+#!/usr/bin/env python3
+
 import sys
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
+from PySide6.QtGui import QFontDatabase
 from PySide6.QtWidgets import QApplication
-
-from gui.sort_main_ui import MainUI
 
 
 def main():
     app = QApplication(sys.argv)
     app.setApplicationName("AyoSORT")
-    app.setApplicationVersion("1.7.0")
+    app.setApplicationVersion("1.7.1")
+    font = app.font()
+    families = set(QFontDatabase.families())
+    preferred = ["DejaVu Sans", "Noto Sans", "Liberation Sans"]
+    chosen = next((name for name in preferred if name in families), None)
+    if chosen:
+        font.setFamily(chosen)
+        app.setFont(font)
+
+    from gui.sort_main_ui import MainUI
+
     window = MainUI()
     window.show()
     sys.exit(app.exec())

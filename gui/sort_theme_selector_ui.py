@@ -2,10 +2,20 @@ from pathlib import Path
 
 from PySide6.QtCore import QEvent, Qt, Signal
 from PySide6.QtGui import QColor, QMouseEvent
-from PySide6.QtWidgets import QDialog, QFrame, QGraphicsDropShadowEffect, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import (
+    QDialog,
+    QFrame,
+    QGraphicsDropShadowEffect,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
 
 from core.sort_settings_logic import SettingsLogic
 from core.sort_theme_selector_logic import ThemeSelectorLogic
+from core.sort_theme_selector_preview_logic import THEME_COLORS
 from gui.sort_theme_selector_widgets import ThemeSelectorOptionUI
 
 
@@ -25,21 +35,23 @@ class ThemeSelectorUI(QDialog):
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
-        container = QWidget(self)
-        layout.addWidget(container)
-        container_layout = QVBoxLayout(container)
+        self.main_container = QWidget(self)
+        self.main_container.setObjectName("themeSelectorRoot")
+        layout.addWidget(self.main_container)
+        container_layout = QVBoxLayout(self.main_container)
         container_layout.setContentsMargins(5, 5, 5, 5)
 
-        self.glass_panel = QFrame(container)
+        self.glass_panel = QFrame(self.main_container)
+        self.glass_panel.setObjectName("themeSelectorPanel")
         container_layout.addWidget(self.glass_panel)
         glass_layout = QVBoxLayout(self.glass_panel)
         glass_layout.setContentsMargins(6, 6, 6, 6)
 
         top_bar = QHBoxLayout()
         top_bar.addWidget(QWidget())
-        self.title_label = QLabel(SettingsLogic.tr('select_theme_title').rstrip(':'))
+        self.title_label = QLabel(SettingsLogic.tr("select_theme_title").rstrip(":"))
         self.title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.btn_close = QPushButton('✕')
+        self.btn_close = QPushButton("✕")
         self.btn_close.setFixedSize(30, 30)
         self.btn_close.clicked.connect(self.reject)
         top_bar.addStretch()
@@ -48,15 +60,15 @@ class ThemeSelectorUI(QDialog):
         top_bar.addWidget(self.btn_close)
         glass_layout.addLayout(top_bar)
 
-        self.info_label = QLabel(' ')
+        self.info_label = QLabel(" ")
         self.info_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.info_label.setFixedHeight(32)
+        self.info_label.setFixedHeight(57)
         glass_layout.addWidget(self.info_label)
         self._build_grid(glass_layout)
 
         bottom_bar = QHBoxLayout()
         bottom_bar.addStretch()
-        self.btn_confirm = QPushButton(SettingsLogic.tr('btn_apply', 'Apply'))
+        self.btn_confirm = QPushButton(SettingsLogic.tr("btn_apply", "Apply"))
         self.btn_confirm.clicked.connect(self.confirm_theme)
         self.btn_confirm_shadow = QGraphicsDropShadowEffect()
         self.btn_confirm.setGraphicsEffect(self.btn_confirm_shadow)
@@ -69,11 +81,25 @@ class ThemeSelectorUI(QDialog):
         self._update_selected_button()
 
     def _build_grid(self, layout):
-        names = {code: SettingsLogic.tr(f'theme_{code}', code.title()) for code in ThemeSelectorLogic.get_theme_codes()}
-        filenames = {'dark': 't-night.png', 'light': 't_light.png', 'creative': 't_creative.png', 'relax': 't-relaxing.png', 'arctic': 't_arctic.png', 'system': 't_system.png'}
-        glows = {'dark': '#04E38A', 'light': '#FBBF24', 'creative': '#F43F5E', 'relax': '#34D399', 'arctic': '#22D3EE', 'system': '#94A3B8'}
-        assets_dir = Path(__file__).resolve().parent.parent / 'assets' / 'themes_logo'
-        fallback = Path(__file__).resolve().parent.parent / 'assets' / 'AyoSORT.png'
+        names = {code: SettingsLogic.tr(f"theme_{code}", code.title()) for code in ThemeSelectorLogic.get_theme_codes()}
+        filenames = {
+            "dark": "t-night.png",
+            "light": "t_light.png",
+            "creative": "t_creative.png",
+            "relax": "t-relaxing.png",
+            "arctic": "t_arctic.png",
+            "system": "t_system.png",
+        }
+        glows = {
+            "dark": "#04E38A",
+            "light": "#FBBF24",
+            "creative": "#F43F5E",
+            "relax": "#34D399",
+            "arctic": "#22D3EE",
+            "system": "#94A3B8",
+        }
+        assets_dir = Path(__file__).resolve().parent.parent / "assets" / "themes_logo"
+        fallback = Path(__file__).resolve().parent.parent / "assets" / "AyoSORT.png"
         grid_widget = QWidget()
         grid_layout = QVBoxLayout(grid_widget)
         codes = ThemeSelectorLogic.get_theme_codes()
@@ -86,7 +112,9 @@ class ThemeSelectorUI(QDialog):
                     break
                 code = codes[index]
                 icon_path = assets_dir / filenames[code]
-                button = ThemeSelectorOptionUI(str(icon_path if icon_path.exists() else fallback), names[code], code, row_index == 0, glows[code])
+                button = ThemeSelectorOptionUI(
+                    str(icon_path if icon_path.exists() else fallback), names[code], code, row_index == 0, glows[code]
+                )
                 button.clicked.connect(lambda _checked=False, value=code: self.on_theme_clicked(value))
                 button.hovered.connect(self.on_hover)
                 button.left.connect(self.on_leave)
@@ -97,7 +125,11 @@ class ThemeSelectorUI(QDialog):
         layout.addWidget(grid_widget)
 
     def eventFilter(self, obj, event):
-        if obj is self.btn_confirm and self.btn_confirm_shadow and event.type() in {QEvent.Type.Enter, QEvent.Type.Leave}:
+        if (
+            obj is self.btn_confirm
+            and self.btn_confirm_shadow
+            and event.type() in {QEvent.Type.Enter, QEvent.Type.Leave}
+        ):
             alpha = 110 if event.type() == QEvent.Type.Enter else 60
             blur = 20 if event.type() == QEvent.Type.Enter else 15
             self.btn_confirm_shadow.setColor(QColor(4, 227, 138, alpha))
@@ -118,23 +150,8 @@ class ThemeSelectorUI(QDialog):
         self.accept()
 
     def apply_preview_theme(self):
-        palette = ThemeSelectorLogic.get_preview_palette(self.preview_theme)
-        self.info_label.setText(' ')
-        bg_c = QColor(palette['bg'])
-        self.glass_panel.setStyleSheet(f"QFrame {{ background: rgba({bg_c.red()}, {bg_c.green()}, {bg_c.blue()}, 210); border-radius: 20px; border: 1px solid rgba(255,255,255,0.08); }}")
-        self.title_label.setStyleSheet(f"color: {palette['text']}; background: transparent; border: none;")
-        self.btn_close.setStyleSheet(f"QPushButton {{ color: {palette['text']}; }}")
-        shadow = QGraphicsDropShadowEffect()
-        shadow.setBlurRadius(30)
-        shadow.setOffset(0, 5)
-        color = QColor(palette['glow'])
-        color.setAlpha(60)
-        shadow.setColor(color)
-        self.glass_panel.setGraphicsEffect(shadow)
-        if self.btn_confirm_shadow:
-            self.btn_confirm_shadow.setColor(QColor(4, 227, 138, 60))
-            self.btn_confirm_shadow.setBlurRadius(15)
-            self.btn_confirm_shadow.setOffset(0, 0)
+        self.info_label.setText(" ")
+        self._apply_theme_palette(self.preview_theme)
 
     def mousePressEvent(self, event: QMouseEvent):
         if event.button() == Qt.MouseButton.LeftButton:
@@ -142,12 +159,59 @@ class ThemeSelectorUI(QDialog):
             event.accept()
 
     def mouseMoveEvent(self, event: QMouseEvent):
-        if event.buttons() == Qt.MouseButton.LeftButton and hasattr(self, '_drag_pos'):
+        if event.buttons() == Qt.MouseButton.LeftButton and hasattr(self, "_drag_pos"):
             self.move(event.globalPosition().toPoint() - self._drag_pos)
             event.accept()
 
     def on_hover(self, theme_name, _code):
         self.info_label.setText(theme_name)
+        self._apply_theme_palette(_code)
 
     def on_leave(self):
-        self.info_label.setText(' ')
+        self.apply_preview_theme()
+        self.info_label.setText(" ")
+
+    def _apply_theme_palette(self, theme_code):
+        data = THEME_COLORS.get(theme_code, THEME_COLORS["dark"])
+        self.main_container.setStyleSheet(
+            f"#themeSelectorRoot {{background-color: {data['window_bg']};border-radius: 26px;}}"
+        )
+        self.glass_panel.setStyleSheet(
+            "#themeSelectorPanel {"
+            f"background-color: {data['panel_bg']};"
+            "border-radius: 20px;"
+            f"border: 1px solid {data['border']};"
+            "}"
+        )
+        self.title_label.setStyleSheet(f"color: {data['text']}; background: transparent; border: none;")
+        self.info_label.setStyleSheet(
+            "font-size: 18px; font-weight: normal; "
+            f"color: {data['text']}; "
+            "padding: 10px 14px; "
+            "border-radius: 12px; "
+            "background-color: transparent; "
+            "border: none;"
+        )
+        self.btn_close.setStyleSheet(
+            "QPushButton {"
+            f"color: {data['text']};"
+            "background: transparent;"
+            "border: none;"
+            "border-radius: 10px;"
+            "font-size: 16px;"
+            "}"
+            "QPushButton:hover {"
+            f"background: {data['close_hover']};"
+            "}"
+        )
+        shadow = QGraphicsDropShadowEffect()
+        shadow.setBlurRadius(30)
+        shadow.setOffset(0, 5)
+        color = QColor(data["glow"])
+        color.setAlpha(60)
+        shadow.setColor(color)
+        self.glass_panel.setGraphicsEffect(shadow)
+        if self.btn_confirm_shadow:
+            self.btn_confirm_shadow.setColor(QColor(4, 227, 138, 60))
+            self.btn_confirm_shadow.setBlurRadius(15)
+            self.btn_confirm_shadow.setOffset(0, 0)

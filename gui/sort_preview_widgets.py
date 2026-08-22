@@ -1,5 +1,3 @@
-import random
-
 from PySide6.QtCore import QEasingCurve, QPoint, QRect, Qt, QVariantAnimation
 from PySide6.QtGui import QColor, QPainter, QPen, QPixmap
 from PySide6.QtWidgets import QWidget
@@ -14,7 +12,7 @@ class PreviewFanWidget(QWidget):
         self.hide()
 
     def set_images(self, image_paths):
-        self.paths = random.sample(image_paths, 5) if len(image_paths) > 5 else list(image_paths)
+        self.paths = list(image_paths[:5])
         self.setVisible(len(self.paths) > 1)
         self.update()
 
@@ -41,7 +39,12 @@ class PreviewFanWidget(QWidget):
             pixmap = QPixmap(path)
             if pixmap.isNull():
                 continue
-            scaled = pixmap.scaled(int(image_width), int(image_height), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+            scaled = pixmap.scaled(
+                int(image_width),
+                int(image_height),
+                Qt.AspectRatioMode.KeepAspectRatio,
+                Qt.TransformationMode.SmoothTransformation,
+            )
             slot_x = start_x + index * dx
             slot_y = start_y - index * dy
             img_x = slot_x + (image_width - scaled.width()) / 2
@@ -53,12 +56,12 @@ class PreviewFanWidget(QWidget):
 
 
 class PreviewOverlayWidget(QWidget):
-    def __init__(self, parent, pixmap, geometry, color, angle_target, offset_target=QPoint(0, 0)):
+    def __init__(self, parent, pixmap, geometry, color, angle_target, offset_target=None):
         super().__init__(parent)
         self.pixmap = pixmap
         self.color = QColor(color)
         self.angle_target = angle_target
-        self.offset_target = offset_target
+        self.offset_target = offset_target or QPoint(0, 0)
         self.current_angle = 0.0
         self.current_offset = QPoint(0, 0)
         self.current_opacity = 1.0
@@ -95,6 +98,8 @@ class PreviewOverlayWidget(QWidget):
         py = (self.height() - self.pixmap.height()) / 2
         target_rect = QRect(int(px), int(py), self.pixmap.width(), self.pixmap.height())
         painter.drawPixmap(int(px), int(py), self.pixmap)
-        pen = QPen(self.color); pen.setWidth(6); pen.setJoinStyle(Qt.PenJoinStyle.MiterJoin)
+        pen = QPen(self.color)
+        pen.setWidth(6)
+        pen.setJoinStyle(Qt.PenJoinStyle.MiterJoin)
         painter.setPen(pen)
         painter.drawRect(target_rect)

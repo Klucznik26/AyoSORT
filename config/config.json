@@ -1,5 +1,10 @@
 {
-    "destination_folder": "/home/marek/Pulpit/test",
+    "destination_folder": null,
     "language": "pl",
-    "theme": "relax"
+    "theme": "dark",
+    "category_names": {
+        "good": "",
+        "mid": "",
+        "bad": ""
+    }
 }
