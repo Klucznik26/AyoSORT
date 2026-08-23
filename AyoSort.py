@@ -9,7 +9,7 @@ from PySide6.QtWidgets import QApplication
 def main():
     app = QApplication(sys.argv)
     app.setApplicationName("AyoSORT")
-    app.setApplicationVersion("1.7.1")
+    app.setApplicationVersion("1.8.1")
     font = app.font()
     families = set(QFontDatabase.families())
     preferred = ["DejaVu Sans", "Noto Sans", "Liberation Sans"]

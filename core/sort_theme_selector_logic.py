@@ -59,6 +59,9 @@ class ThemeSelectorLogic:
         QWidget#main_widget, QMainWindow {{ background-color: {t["bg_main"]}; }}
         QFrame#leftPanel, QFrame#rightPanel {{ background: {panel_bg}; border: 1px solid {panel_border}; border-radius: 14px; }}
         QFrame#narrowPanel {{ background: {narrow_bg}; border: 1px solid {narrow_border}; border-radius: 14px; }}
+        QFrame#destinationBanner {{ background: {t["field_bg"]}; border: 1px solid {t["accent"]}; border-radius: 12px; }}
+        QLabel#destinationTitle {{ color: {t["accent"]}; font-weight: bold; font-size: 12px; }}
+        QLabel#destinationPath {{ color: {t["text"]}; font-weight: bold; font-size: 13px; }}
         QLabel {{ color: {t["text"]}; }}
         QLabel[secondary='true'] {{ color: {t["text_muted"]}; }}
         QLabel#dropArea {{ background: transparent; color: {drop_color}; font-size: 18px; border: none; border-radius: {drop_radius}; padding: 15px; }}
@@ -68,6 +71,10 @@ class ThemeSelectorLogic:
         QPushButton:hover {{ background-color: {t["button_hover"]}; color: {btn_hover_text}; border: {btn_hover_border}; }}
         QPushButton:pressed {{ background-color: {t["button_pressed"]}; color: {btn_pressed_text}; }}
         QPushButton:disabled {{ background-color: {t["button_disabled_bg"]}; color: {t["button_disabled_text"]}; border: {btn_disabled_border}; }}
+        QToolButton {{ background-color: {t["button_bg"]}; color: {button_text}; border: 1px solid {t["border"]}; border-radius: 7px; padding: 5px 7px; font-weight: bold; }}
+        QToolButton:hover {{ background-color: {t["button_hover"]}; color: {btn_hover_text}; border: {btn_hover_border}; }}
+        QToolButton:pressed {{ background-color: {t["button_pressed"]}; color: {btn_pressed_text}; }}
+        QToolButton:disabled {{ background-color: {t["button_disabled_bg"]}; color: {t["text_muted"]}; border: 1px solid {t["border"]}; }}
         QPushButton#runButton {{ background-color: {run_bg}; border: {run_border}; color: {run_color}; font-weight: bold; }}
         QPushButton#runButton:hover {{ background-color: {run_hov_bg}; border: {run_hov_border}; color: {run_hov_color}; }}
         QPushButton#runButton:pressed {{ background-color: {run_prs_bg}; }}

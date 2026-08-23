@@ -1,4 +1,4 @@
-# AyoSORT 1.7.1 – Intelligent Image Sorting 🚀🖼️
+# AyoSORT 1.8.1 – Intelligent Image Sorting 🚀🖼️
 
 AyoSORT is a fast and lightweight desktop application designed for intelligent image categorization.
 
@@ -24,7 +24,28 @@ Part of the **Ayo Ecosystem**.
 
 ---
 
-## 🆕 What’s New in 1.7.1
+## 🆕 What’s New in 1.8.1
+
+### Safer sessions and destinations
+
+* A remembered but unavailable destination now blocks sorting instead of silently falling back beside the source.
+* Large files are copied to hidden `.part` files, flushed, and only then published atomically under the final name.
+* Category folder names are frozen for the lifetime of a session, even when the interface language changes.
+* Files dropped from multiple folders are accepted after choosing one shared destination.
+* Empty source folders clear stale recoverable sessions, while session-write failures are surfaced in the GUI.
+* The language selector uses built-in vector flags and no longer depends on system emoji fonts.
+
+## What’s New in 1.8.0
+
+### Recoverable sessions and a professional image viewer
+
+* The current queue, position, destination and complete undo history are saved atomically after every action.
+* An interrupted session is restored automatically, including safe undo after restarting AyoSORT.
+* The image viewer supports wheel zoom, panning, actual size, fit-to-window and full-screen viewing.
+* File size, resolution and available EXIF camera/exposure information are shown with the preview.
+* Two images can be opened side by side for detailed comparison; double-clicking the queue still promotes an image.
+
+## What’s New in 1.7.1
 
 ### Safer and smoother sorting
 
@@ -47,7 +68,7 @@ Part of the **Ayo Ecosystem**.
 
 ### 🌍 Massive Localization (i18n) Overhaul
 
-* **43 Languages Fully Supported:** All translations verified and unified
+* **49 Languages Fully Supported:** All translations verified and unified
 * **Standardized ISO Codes:** Fully compliant with ISO 639-1
 * **Unified Translation Keys:** Consistent keys across all `.json` files
 * **Improved Language Selector Layout:** Clean grid-based UI
@@ -181,6 +202,14 @@ python -m pip install -r requirements.txt
 ```bash
 python AyoSort.py
 ```
+
+### Build a clean release archive
+
+```bash
+python tools/build_release.py
+```
+
+The archive is created in `dist/` without Git metadata, tests, Python caches, Ruff caches, or previous build artifacts.
 
 ---
 

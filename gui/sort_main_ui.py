@@ -5,6 +5,7 @@ from PySide6.QtWidgets import QFileDialog, QFrame, QHBoxLayout, QLabel, QMainWin
 from core.sort_session_logic import SortSessionLogic
 from core.sort_settings_logic import SettingsLogic
 from core.sort_theme_selector_logic import ThemeSelectorLogic
+from gui.sort_image_viewer_ui import CompareImagesDialog
 from gui.sort_preview_widgets import PreviewOverlayWidget
 from gui.sort_workspace_ui import SortWorkspaceUI
 
@@ -31,7 +32,7 @@ class SortTask(QRunnable):
 
 
 class MainUI(QMainWindow):
-    VERSION = "1.7.1"
+    VERSION = "1.8.1"
 
     def __init__(self):
         super().__init__()
@@ -58,6 +59,8 @@ class MainUI(QMainWindow):
         self._sort_in_progress = False
         self._sort_task = None
         self._pending_animation = None
+        self._compare_dialog = None
+        self._warned_unavailable_destination = None
         self.apply_theme(self.current_theme_name)
         self._build_startup_ui()
         self.retranslate_ui()
@@ -80,10 +83,13 @@ class MainUI(QMainWindow):
         self.workspace_ui.batch_ui.category_names_requested.connect(self.open_category_names_window)
         self.workspace_ui.batch_ui.sort_requested.connect(self.sort_current)
         self.workspace_ui.batch_ui.undo_requested.connect(self.undo_last_sort)
-        self.workspace_ui.preview_ui.file_list.itemClicked.connect(self._on_list_item_clicked)
+        self.workspace_ui.preview_ui.file_list.itemDoubleClicked.connect(self._on_list_item_activated)
+        self.workspace_ui.file_drop_ui.compare_requested.connect(self.compare_images)
         self._setup_sort_shortcuts()
         self._setup_undo_shortcuts()
         self.retranslate_ui()
+        if self.session_logic.restored:
+            self.statusBar().showMessage(SettingsLogic.tr("session_restored", "Previous sorting session restored"), 6000)
 
     def _build_startup_ui(self):
         self._startup_widget = QFrame(self)
@@ -159,8 +165,23 @@ class MainUI(QMainWindow):
             self.workspace_ui.batch_ui.set_source_ready(True)
             self._refresh_state()
             return
+        if self.session_logic.last_load_error == "mixed_sources_need_destination":
+            dialog = self._directory_dialog("dialog_create_title", "dialog_create_accept")
+            if dialog.exec() and dialog.selectedFiles():
+                try:
+                    self.session_logic.initialize_sorting_structure(dialog.selectedFiles()[0])
+                except OSError as exc:
+                    QMessageBox.critical(
+                        self, SettingsLogic.tr("error_title"), SettingsLogic.tr("msg_error_create").format(e=exc)
+                    )
+                    return
+                if self.session_logic.load_dropped_paths(paths):
+                    self.workspace_ui.batch_ui.set_source_ready(True)
+                    self._refresh_state()
+            return
         if paths:
             QMessageBox.information(self, SettingsLogic.tr("info_title"), SettingsLogic.tr("msg_no_images"))
+        self._warn_if_session_not_saved()
 
     def create_sorting_catalog(self):
         if self._sort_in_progress:
@@ -174,6 +195,8 @@ class MainUI(QMainWindow):
                 QMessageBox.critical(
                     self, SettingsLogic.tr("error_title"), SettingsLogic.tr("msg_error_create").format(e=exc)
                 )
+                return
+            self._refresh_state(show_empty=True)
 
     def select_folder_to_sort(self):
         if self._sort_in_progress:
@@ -204,6 +227,7 @@ class MainUI(QMainWindow):
                 self.workspace_ui.preview_ui.clear_files()
                 self.workspace_ui.batch_ui.set_source_ready(False)
                 self.workspace_ui.file_drop_ui.reset_preview()
+                self._warn_if_session_not_saved()
                 return
             self.workspace_ui.batch_ui.set_source_ready(True)
             self._refresh_state()
@@ -216,6 +240,8 @@ class MainUI(QMainWindow):
         if self.workspace_ui is None:
             return
         state = self.session_logic.state()
+        destination, fixed_destination, categories, destination_available = self.session_logic.destination_info()
+        self.workspace_ui.set_destination_info(destination, fixed_destination, categories, destination_available)
         if state.current_image_path:
             self.workspace_ui.file_drop_ui.show_preview(state.current_image_path)
             self.workspace_ui.preview_ui.update_files(state.remaining_images, state.random_samples)
@@ -225,10 +251,14 @@ class MainUI(QMainWindow):
         else:
             self.workspace_ui.file_drop_ui.show_finished()
             self.workspace_ui.preview_ui.clear_files(completed=True)
-        self.workspace_ui.batch_ui.set_sort_enabled(state.has_images)
+        sorting_available = state.has_images and destination_available
+        self.workspace_ui.batch_ui.set_sort_enabled(sorting_available)
         self.workspace_ui.batch_ui.set_undo_enabled(state.can_undo)
-        self._set_sort_shortcuts_enabled(state.has_images)
+        self.workspace_ui.file_drop_ui.set_compare_enabled(len(state.remaining_images) > 1)
+        self._set_sort_shortcuts_enabled(sorting_available)
         self._set_undo_shortcuts_enabled(state.can_undo)
+        self._warn_if_destination_unavailable(destination, fixed_destination, destination_available)
+        self._warn_if_session_not_saved()
 
     def _setup_sort_shortcuts(self):
         if self._sort_shortcuts:
@@ -268,6 +298,10 @@ class MainUI(QMainWindow):
             return
         state = self.session_logic.state()
         if state.is_finished:
+            return
+        destination, fixed_destination, _categories, destination_available = self.session_logic.destination_info()
+        if not destination_available:
+            self._warn_if_destination_unavailable(destination, fixed_destination, destination_available, force=True)
             return
         pixmap = self.workspace_ui.file_drop_ui.current_pixmap()
         geom = self.workspace_ui.file_drop_ui.preview_geometry(self)
@@ -310,7 +344,8 @@ class MainUI(QMainWindow):
             self.workspace_ui.batch_ui.set_busy(busy)
             self.workspace_ui.settings_ui.setEnabled(not busy)
             self.workspace_ui.preview_ui.file_list.setEnabled(not busy)
-        self._set_sort_shortcuts_enabled(False if busy else self.session_logic.state().has_images)
+        destination_available = self.session_logic.destination_info()[3]
+        self._set_sort_shortcuts_enabled(False if busy else self.session_logic.state().has_images and destination_available)
         self._set_undo_shortcuts_enabled(False if busy else self.session_logic.state().can_undo)
 
     def undo_last_sort(self):
@@ -330,7 +365,7 @@ class MainUI(QMainWindow):
             return
         self._refresh_state()
 
-    def _on_list_item_clicked(self, item):
+    def _on_list_item_activated(self, item):
         if self._sort_in_progress:
             return
         row = self.workspace_ui.preview_ui.file_list.row(item)
@@ -338,8 +373,53 @@ class MainUI(QMainWindow):
             self.session_logic.move_to_front(row)
             self._refresh_state()
 
+    def compare_images(self):
+        if self._sort_in_progress:
+            return
+        current = self.session_logic.image_path_at(0)
+        selected_row = self.workspace_ui.preview_ui.file_list.currentRow()
+        relative_index = selected_row if selected_row > 0 else 1
+        comparison = self.session_logic.image_path_at(relative_index)
+        if not current or not comparison:
+            QMessageBox.information(
+                self,
+                SettingsLogic.tr("info_title"),
+                SettingsLogic.tr("viewer_compare_unavailable", "Select another image to compare."),
+            )
+            return
+        image_paths = [
+            path
+            for index in range(len(self.session_logic.state().remaining_images))
+            if (path := self.session_logic.image_path_at(index)) is not None
+        ]
+        self._compare_dialog = CompareImagesDialog(image_paths, current, comparison, self)
+        self._compare_dialog.show()
+
     def keyPressEvent(self, event: QKeyEvent):
         if not self._sort_in_progress and event.key() in self.key_map:
             self.sort_current(self.key_map[event.key()])
         else:
             super().keyPressEvent(event)
+
+    def _warn_if_destination_unavailable(self, path, fixed: bool, available: bool, force: bool = False):
+        if not fixed or available or not path:
+            self._warned_unavailable_destination = None
+            return
+        if not force and self._warned_unavailable_destination == path:
+            return
+        self._warned_unavailable_destination = path
+        QMessageBox.warning(
+            self,
+            SettingsLogic.tr("error_title"),
+            SettingsLogic.tr("msg_error_access").format(e=path),
+        )
+
+    def _warn_if_session_not_saved(self):
+        error = self.session_logic.take_persistence_error()
+        if not error:
+            return
+        QMessageBox.warning(
+            self,
+            SettingsLogic.tr("error_title"),
+            SettingsLogic.tr("msg_error_access").format(e=f"session.json — {error}"),
+        )

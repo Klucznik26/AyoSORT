@@ -27,3 +27,7 @@ class SortWorkspaceUI(QWidget):
         self.batch_ui.retranslate_ui()
         self.file_drop_ui.retranslate_ui()
         self.preview_ui.retranslate_ui()
+        self.batch_ui.retranslate_destination()
+
+    def set_destination_info(self, path: str | None, fixed: bool, categories: list[str], available: bool):
+        self.batch_ui.set_destination_info(path, fixed, categories, available)

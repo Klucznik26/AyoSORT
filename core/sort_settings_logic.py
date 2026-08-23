@@ -90,6 +90,11 @@ class SettingsLogic:
         return root / "AyoSORT" / "config.json"
 
     @staticmethod
+    def session_path() -> Path:
+        """Return the per-user path used for the recoverable sorting session."""
+        return SettingsLogic.config_path().with_name("session.json")
+
+    @staticmethod
     def legacy_config_path() -> Path:
         return SettingsLogic.base_dir() / "config.json"
 

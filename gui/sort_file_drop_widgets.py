@@ -1,7 +1,18 @@
 import re
 
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor, QDragEnterEvent, QDropEvent, QPainter, QPainterPath, QPixmap, QRadialGradient
+from PySide6.QtCore import QPointF, Qt
+from PySide6.QtGui import (
+    QColor,
+    QDragEnterEvent,
+    QDropEvent,
+    QImageReader,
+    QMouseEvent,
+    QPainter,
+    QPainterPath,
+    QPixmap,
+    QRadialGradient,
+    QWheelEvent,
+)
 from PySide6.QtWidgets import QLabel, QSizePolicy
 
 from core.sort_settings_logic import SettingsLogic
@@ -52,6 +63,11 @@ class FileDropLabel(QLabel):
         super().__init__(parent)
         self.on_drop_callback = on_drop_callback
         self.source_pixmap = None
+        self.image_path = None
+        self._fit_mode = True
+        self._scale = 1.0
+        self._offset = QPointF()
+        self._drag_origin = None
         self.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         self.setAcceptDrops(True)
         self.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -63,26 +79,65 @@ class FileDropLabel(QLabel):
             self.setText(SettingsLogic.tr("drop_label_text"))
 
     def set_image_path(self, path: str):
-        pixmap = QPixmap(path)
+        reader = QImageReader(path)
+        reader.setAutoTransform(True)
+        pixmap = QPixmap.fromImage(reader.read())
         if pixmap.isNull():
             self.source_pixmap = None
+            self.image_path = None
             self.setText(SettingsLogic.tr("msg_error_load").format(filename=path))
             return
         self.source_pixmap = pixmap
-        self._update_scaled_pixmap()
+        self.image_path = path
+        self.fit_to_window()
 
     def clear_preview(self, text: str | None = None):
         self.source_pixmap = None
+        self.image_path = None
+        self._fit_mode = True
+        self._scale = 1.0
+        self._offset = QPointF()
         self.setPixmap(QPixmap())
         self.setText(text or SettingsLogic.tr("drop_label_text"))
 
-    def _update_scaled_pixmap(self):
+    def fit_to_window(self):
+        self._fit_mode = True
+        self._offset = QPointF()
+        self.update()
+
+    def actual_size(self):
         if self.source_pixmap is None:
             return
-        scaled = self.source_pixmap.scaled(
+        self._fit_mode = False
+        self._scale = 1.0
+        self._offset = QPointF()
+        self.update()
+
+    def zoom_by(self, factor: float):
+        if self.source_pixmap is None:
+            return
+        current = self._effective_scale()
+        self._fit_mode = False
+        self._scale = max(0.05, min(16.0, current * factor))
+        self.update()
+
+    def displayed_pixmap(self) -> QPixmap:
+        if self.source_pixmap is None:
+            return QPixmap()
+        return self.source_pixmap.scaled(
             self.size(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation
         )
-        self.setPixmap(scaled)
+
+    def _fit_scale(self) -> float:
+        if self.source_pixmap is None or self.source_pixmap.isNull():
+            return 1.0
+        return min(self.width() / self.source_pixmap.width(), self.height() / self.source_pixmap.height())
+
+    def _effective_scale(self) -> float:
+        return self._fit_scale() if self._fit_mode else self._scale
+
+    def _update_scaled_pixmap(self):
+        self.update()
 
     @staticmethod
     def _parse_color(value: str | None, fallback: QColor) -> QColor:
@@ -174,7 +229,67 @@ class FileDropLabel(QLabel):
 
     def paintEvent(self, event):
         self._paint_drop_background()
-        super().paintEvent(event)
+        if self.source_pixmap is None:
+            super().paintEvent(event)
+            return
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform)
+        scale = self._effective_scale()
+        width = self.source_pixmap.width() * scale
+        height = self.source_pixmap.height() * scale
+        origin = QPointF((self.width() - width) / 2, (self.height() - height) / 2) + self._offset
+        painter.drawPixmap(
+            origin,
+            self.source_pixmap.scaled(
+                max(1, round(width)),
+                max(1, round(height)),
+                Qt.AspectRatioMode.IgnoreAspectRatio,
+                Qt.TransformationMode.SmoothTransformation,
+            ),
+        )
+
+    def wheelEvent(self, event: QWheelEvent):
+        if self.source_pixmap is None:
+            super().wheelEvent(event)
+            return
+        self.zoom_by(1.2 if event.angleDelta().y() > 0 else 1 / 1.2)
+        event.accept()
+
+    def mouseDoubleClickEvent(self, event: QMouseEvent):
+        if event.button() == Qt.MouseButton.LeftButton and self.source_pixmap is not None:
+            if self._fit_mode:
+                self.actual_size()
+            else:
+                self.fit_to_window()
+            event.accept()
+            return
+        super().mouseDoubleClickEvent(event)
+
+    def mousePressEvent(self, event: QMouseEvent):
+        if event.button() == Qt.MouseButton.LeftButton and self.source_pixmap is not None:
+            self._drag_origin = event.position()
+            self.setCursor(Qt.CursorShape.ClosedHandCursor)
+            event.accept()
+            return
+        super().mousePressEvent(event)
+
+    def mouseMoveEvent(self, event: QMouseEvent):
+        if self._drag_origin is not None and event.buttons() & Qt.MouseButton.LeftButton:
+            delta = event.position() - self._drag_origin
+            self._drag_origin = event.position()
+            self._offset += delta
+            self.update()
+            event.accept()
+            return
+        super().mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event: QMouseEvent):
+        if event.button() == Qt.MouseButton.LeftButton and self._drag_origin is not None:
+            self._drag_origin = None
+            self.unsetCursor()
+            event.accept()
+            return
+        super().mouseReleaseEvent(event)
 
     def dragEnterEvent(self, event: QDragEnterEvent):
         if event.mimeData().hasUrls():

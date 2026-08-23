@@ -1,9 +1,9 @@
 from math import pi, sin
 from pathlib import Path
 
-from PySide6.QtCore import QEasingCurve, QRect, QSize, Qt, QVariantAnimation, Signal
-from PySide6.QtGui import QColor, QPainter, QPixmap
-from PySide6.QtWidgets import QAbstractButton, QFrame, QHBoxLayout, QPushButton, QVBoxLayout
+from PySide6.QtCore import QEasingCurve, QRect, QSize, Qt, QUrl, QVariantAnimation, Signal
+from PySide6.QtGui import QColor, QDesktopServices, QPainter, QPixmap
+from PySide6.QtWidgets import QAbstractButton, QFrame, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
 
 from core.sort_icon_crop_logic import crop_alpha_pixmap
 from core.sort_settings_logic import SettingsLogic
@@ -129,6 +129,29 @@ class BatchUI(QFrame):
         layout.addWidget(self.btn_select_folder)
         layout.addWidget(self.btn_category_names)
 
+        self.destination_panel = QFrame(self)
+        self.destination_panel.setObjectName("destinationBanner")
+        destination_layout = QVBoxLayout(self.destination_panel)
+        destination_layout.setContentsMargins(9, 8, 9, 8)
+        destination_layout.setSpacing(3)
+        self.destination_title = QLabel()
+        self.destination_title.setObjectName("destinationTitle")
+        self.destination_title.setWordWrap(True)
+        self.destination_path = QLabel()
+        self.destination_path.setObjectName("destinationPath")
+        self.destination_path.setWordWrap(True)
+        self.destination_path.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
+        self.destination_mode = QLabel()
+        self.destination_mode.setProperty("secondary", True)
+        self.destination_mode.setWordWrap(True)
+        self.btn_open_destination = QPushButton()
+        self.btn_open_destination.clicked.connect(self._open_destination)
+        destination_layout.addWidget(self.destination_title)
+        destination_layout.addWidget(self.destination_path)
+        destination_layout.addWidget(self.destination_mode)
+        destination_layout.addWidget(self.btn_open_destination)
+        layout.addWidget(self.destination_panel)
+
         sort_layout = QHBoxLayout()
         sort_layout.setSpacing(6)
         sort_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -140,7 +163,12 @@ class BatchUI(QFrame):
         layout.addLayout(sort_layout)
         layout.addWidget(self.btn_undo)
         layout.addStretch()
+        self._destination = None
+        self._destination_fixed = False
+        self._destination_available = False
+        self._categories = []
         self.retranslate_ui()
+        self.set_destination_info(None, False, [], False)
         self.set_sort_enabled(False)
 
     def _create_sort_button(self, icon_filename: str, code: str, accent_color: str) -> SortIconButton:
@@ -159,6 +187,42 @@ class BatchUI(QFrame):
         self.btn_good.setToolTip(category_names["good"])
         self.btn_mid.setToolTip(category_names["mid"])
         self.btn_bad.setToolTip(category_names["bad"])
+        self.retranslate_destination()
+
+    def retranslate_destination(self):
+        self.destination_title.setText(SettingsLogic.tr("destination_title", "Sorted images will be copied to:"))
+        self.btn_open_destination.setText(SettingsLogic.tr("destination_open", "Open folder"))
+        self._render_destination()
+
+    def set_destination_info(self, path: str | None, fixed: bool, categories: list[str], available: bool):
+        self._destination = path
+        self._destination_fixed = fixed
+        self._destination_available = available
+        self._categories = categories
+        self._render_destination()
+
+    def _render_destination(self):
+        if self._destination:
+            self.destination_path.setText(self._destination)
+            self.destination_path.setToolTip(self._destination)
+            if self._destination_fixed and not self._destination_available:
+                mode = SettingsLogic.tr("msg_error_access", "Access error: {e}").format(e=self._destination)
+            else:
+                mode_key = "destination_fixed" if self._destination_fixed else "destination_source"
+                mode_default = "Selected destination" if self._destination_fixed else "SORT folder next to source"
+                mode = SettingsLogic.tr(mode_key, mode_default)
+            categories = " • ".join(self._categories)
+            self.destination_mode.setText(f"{mode}\n{categories}" if categories else mode)
+            self.btn_open_destination.setEnabled(self._destination_available and Path(self._destination).is_dir())
+        else:
+            self.destination_path.setText(SettingsLogic.tr("destination_pending", "Select source or destination"))
+            self.destination_path.setToolTip("")
+            self.destination_mode.setText(SettingsLogic.tr("destination_pending_hint", "The path will appear here."))
+            self.btn_open_destination.setEnabled(False)
+
+    def _open_destination(self):
+        if self._destination and Path(self._destination).is_dir():
+            QDesktopServices.openUrl(QUrl.fromLocalFile(self._destination))
 
     def set_source_ready(self, ready: bool):
         self.set_sort_enabled(ready)
