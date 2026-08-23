@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
-# Copyright (C) 2026 Klucznik MZ
+# Copyright (C) 2026 Marek Zubrzycki (Klucznik MZ)
 from PySide6.QtGui import QBitmap, QPixmap, QRegion
 
 

@@ -8,19 +8,26 @@ Part of the **Ayo Ecosystem**.
 
 ---
 
-## 📸 Program Preview
+## 📸 AyoSORT 1.8.1 Preview
+
+The screenshots below show the current interface with the image viewer toolbar,
+sorting destination panel, image queue and all six available themes.
 
 ### Main Interface Themes
 
-|                     Dark Theme                     |                     Light Theme                     |                     Creative Theme                     |                     Recreational Theme                     |                     Arctic Theme                     |                     System Theme                     |
-| :------------------------------------------------: | :-------------------------------------------------: | :----------------------------------------------------: | :--------------------------------------------------------: | :--------------------------------------------------: | :--------------------------------------------------: |
-| <img src="screenshots/dark_theme.png" width="180"> | <img src="screenshots/light_theme.png" width="180"> | <img src="screenshots/creative_theme.png" width="180"> | <img src="screenshots/recreational_theme.png" width="180"> | <img src="screenshots/arctic_theme.png" width="180"> | <img src="screenshots/system_theme.png" width="180"> |
+| Dark Theme | Light Theme | Creative Theme |
+| :--------: | :---------: | :------------: |
+| <img src="screenshots/dark_theme.png" alt="AyoSORT 1.8.1 — Dark theme" width="330"> | <img src="screenshots/light_theme.png" alt="AyoSORT 1.8.1 — Light theme" width="330"> | <img src="screenshots/creative_theme.png" alt="AyoSORT 1.8.1 — Creative theme" width="330"> |
 
-### Functional Views
+| Relax Theme | Arctic Theme | System Theme |
+| :---------: | :----------: | :----------: |
+| <img src="screenshots/recreational_theme.png" alt="AyoSORT 1.8.1 — Relax theme" width="330"> | <img src="screenshots/arctic_theme.png" alt="AyoSORT 1.8.1 — Arctic theme" width="330"> | <img src="screenshots/system_theme.png" alt="AyoSORT 1.8.1 — System theme" width="330"> |
 
-|                     Select theme                     |                     Language Selection                     |
-| :--------------------------------------------------: | :--------------------------------------------------------: |
-| <img src="screenshots/select_theme.png" width="400"> | <img src="screenshots/language_selection.png" width="400"> |
+### Theme and Language Selection
+
+| Theme selector | Language selector with built-in flags |
+| :------------: | :------------------------------------: |
+| <img src="screenshots/select_theme.png" alt="AyoSORT 1.8.1 theme selector" width="450"> | <img src="screenshots/language_selection.png" alt="AyoSORT 1.8.1 language selector with vector flags" width="450"> |
 
 ---
 
@@ -215,7 +222,7 @@ The archive is created in `dist/` without Git metadata, tests, Python caches, Ru
 
 ## License
 
-Copyright (C) 2026 Klucznik MZ
+Copyright (C) 2026 Marek Zubrzycki (Klucznik MZ)
 
 AyoSORT is licensed under the **GNU General Public License v3.0 only**
 (`GPL-3.0-only`). See [LICENSE](LICENSE) for the full license text.

@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
-# Copyright (C) 2026 Klucznik MZ
+# Copyright (C) 2026 Marek Zubrzycki (Klucznik MZ)
 THEME = {
     "name": "creative",
     "bg_main": "#2A1418",

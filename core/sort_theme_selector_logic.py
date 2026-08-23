@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
-# Copyright (C) 2026 Klucznik MZ
+# Copyright (C) 2026 Marek Zubrzycki (Klucznik MZ)
 from core.sort_settings_logic import SettingsLogic
 from core.sort_theme_selector_theme_arctic import THEME as ARCTIC_THEME
 from core.sort_theme_selector_theme_creative import THEME as CREATIVE_THEME
