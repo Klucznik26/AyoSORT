@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# Copyright (C) 2026 Klucznik MZ
 import json
 import tempfile
 import unittest

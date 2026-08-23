@@ -213,5 +213,14 @@ The archive is created in `dist/` without Git metadata, tests, Python caches, Ru
 
 ---
 
+## License
+
+Copyright (C) 2026 Klucznik MZ
+
+AyoSORT is licensed under the **GNU General Public License v3.0 only**
+(`GPL-3.0-only`). See [LICENSE](LICENSE) for the full license text.
+
+---
+
 👉 "Start sorting your images instantly"
 👉 "Fast workflow, zero friction"

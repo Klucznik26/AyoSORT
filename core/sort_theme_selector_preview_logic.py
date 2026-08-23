@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# Copyright (C) 2026 Klucznik MZ
 THEME_COLORS = {
     "dark": {
         "window_bg": "rgba(6, 14, 11, 0.30)",

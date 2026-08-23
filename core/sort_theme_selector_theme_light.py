@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# Copyright (C) 2026 Klucznik MZ
 THEME = {
     "name": "light",
     "bg_main": "#F4EFE6",

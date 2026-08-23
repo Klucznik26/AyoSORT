@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# Copyright (C) 2026 Klucznik MZ
 THEME = {
     "name": "system",
     "bg_main": "palette(window)",

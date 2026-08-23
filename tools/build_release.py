@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-only
+# Copyright (C) 2026 Klucznik MZ
 import argparse
 import zipfile
 from pathlib import Path
@@ -6,6 +8,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 INCLUDED_FILES = {
     "AyoSort.py",
+    "LICENSE",
     "README.md",
     "requirements.txt",
     "pyproject.toml",
