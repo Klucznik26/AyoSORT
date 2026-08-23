@@ -1,5 +1,7 @@
 # AyoSORT 1.8.1 – Intelligent Image Sorting 🚀🖼️
 
+[![CI](https://github.com/Klucznik26/AyoSORT/actions/workflows/ci.yml/badge.svg)](https://github.com/Klucznik26/AyoSORT/actions/workflows/ci.yml)
+
 AyoSORT is a fast and lightweight desktop application designed for intelligent image categorization.
 
 Built for photographers, creators, and large dataset workflows, it provides a clean, modern interface with a lightning-fast keyboard-driven sorting system.
@@ -126,7 +128,7 @@ Color-based transitions during sorting
 
 * Dark Theme
 * Light Theme
-* Recreational Theme
+* Relax Theme
 * Creative Theme
 * System Theme
 * Arctic Theme
@@ -171,6 +173,7 @@ All dialogs use non-native Qt rendering for full styling and localization contro
 * Python 3.10+
 * PySide6 (Qt for Python)
 * Developed on Linux (Fedora / openSUSE)
+* GitHub Actions CI with Ruff and pytest on Python 3.10 and 3.12
 
 ---
 
